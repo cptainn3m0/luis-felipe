@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Luis Felipe — Software Engineer & DevOps Tech Lead</title>
 <meta name="description" content="Portfolio of Felix Luis Felipe Chávez Ramírez — full-stack software engineer and DevOps. Scalable SaaS platforms, modern web apps and automation." />
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='6' fill='%234f7cff'/%3E%3Ccircle cx='26' cy='8' r='2' fill='%234f7cff'/%3E%3Ccircle cx='6' cy='24' r='2' fill='%234f7cff'/%3E%3C/svg%3E" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23ff6a2b'/%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="../assets/styles.css" />
 </head>
 <body data-planet="on">
@@ -18,19 +18,14 @@
 <header class="nav" id="nav">
   <div class="container nav-inner">
     <a class="brand" href="index.html" aria-label="Luis Felipe — home">
-      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
-        <circle cx="16" cy="18" r="7" fill="var(--accent)"/>
-        <circle cx="26" cy="7" r="2.2" fill="var(--text)"/>
-        <circle cx="6" cy="10" r="1.6" fill="var(--text)"/>
-        <circle cx="27" cy="26" r="1.4" fill="var(--text)"/>
-      </svg>
-      LUIS<span>&nbsp;FELIPE</span>
+      <span class="brand-badge">LF</span>
+      <span class="brand-name"><b>Luis Felipe</b><em>Software Engineer</em></span>
     </a>
     <nav class="nav-links" aria-label="Main navigation">
       <a href="#about">About</a>
-      <a href="#experience">Experience</a>
-      <a href="#skills">Skills</a>
-      <a href="#projects">Projects</a>
+      <a href="#experience">Career</a>
+      <a href="#work">Work</a>
+      <a href="#contact">Contact</a>
     </nav>
     <div class="nav-actions">
       <a class="lang-toggle" id="langToggle" href="../index.html" aria-label="Cambiar a español" lang="es" hreflang="es">ES</a>
@@ -48,28 +43,32 @@
   <!-- ================= HERO ================= -->
   <section class="hero" id="home">
     <div class="container">
-      <div class="hero-portfolio">
+      <div class="hero-grid">
         <div class="hero-content">
           <p class="eyebrow" data-stagger="1">Portfolio · Guatemala</p>
-          <h1 class="name" data-stagger="2">Luis Felipe</h1>
-          <p class="role" data-stagger="2">Software Engineer · DevOps Tech Lead</p>
+          <h1 class="name" data-stagger="2"><span class="l1">Luis</span><br><span class="l2">Felipe</span></h1>
+          <p class="role" data-stagger="3"><span class="dot"></span> Software Engineer · DevOps Tech Lead</p>
           <p class="lede" data-stagger="3">
             I build scalable SaaS platforms, modern web applications and automation workflows.
-            Full-stack by training, DevOps by conviction: from the system architecture to the
-            server that keeps it online.
+            Full-stack by training, DevOps by conviction — from the architecture to the server that keeps it online.
           </p>
           <div class="hero-ctas" data-stagger="4">
             <a class="btn btn-primary" href="#contact">Get in touch</a>
-            <a class="btn" href="#experience">View experience</a>
+            <a class="btn" href="#work">View work</a>
           </div>
-          <div class="hero-meta" data-stagger="5">
-            <div><strong>5+</strong>years of engineering</div>
-            <div><strong>10+</strong>platforms delivered</div>
+          <div class="hero-facts" data-stagger="5">
+            <div><strong>5<em>+</em></strong>years of engineering</div>
+            <div><strong>10<em>+</em></strong>platforms delivered</div>
             <div><strong>3</strong>languages</div>
           </div>
         </div>
-        <div class="portrait-wrap" data-stagger="3">
-          <img id="portrait" src="../assets/img/luis.jpg" alt="Photo of Luis Felipe" />
+        <div class="portrait" data-stagger="3">
+          <span class="bracket tl" aria-hidden="true"></span>
+          <span class="bracket br" aria-hidden="true"></span>
+          <div class="frame">
+            <img id="portrait" src="../assets/img/luis.jpg" alt="Photo of Luis Felipe" />
+          </div>
+          <span class="badge"><span class="pulse"></span> Available</span>
           <label class="portrait-edit" for="photoInput">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h3l1.5-2h7L18 7h2a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.2"/></svg>
             Change photo
@@ -80,163 +79,137 @@
     </div>
   </section>
 
-  <!-- ================= ABOUT ================= -->
+  <!-- ================= MARQUEE / STACK ================= -->
+  <div class="marquee" aria-label="Technologies">
+    <div class="marquee-row">
+      <span class="marquee-item">JavaScript</span><span class="marquee-item ghost">TypeScript</span><span class="marquee-item">React</span><span class="marquee-item ghost">Next.js</span><span class="marquee-item">Node.js</span><span class="marquee-item ghost">NestJS</span><span class="marquee-item">Prisma</span>
+      <span class="marquee-item">JavaScript</span><span class="marquee-item ghost">TypeScript</span><span class="marquee-item">React</span><span class="marquee-item ghost">Next.js</span><span class="marquee-item">Node.js</span><span class="marquee-item ghost">NestJS</span><span class="marquee-item">Prisma</span>
+    </div>
+    <div class="marquee-row rev">
+      <span class="marquee-item">Docker</span><span class="marquee-item ghost">Linux</span><span class="marquee-item">CI/CD</span><span class="marquee-item ghost">SQL</span><span class="marquee-item">REST APIs</span><span class="marquee-item ghost">Git &amp; GitHub</span>
+      <span class="marquee-item">Docker</span><span class="marquee-item ghost">Linux</span><span class="marquee-item">CI/CD</span><span class="marquee-item ghost">SQL</span><span class="marquee-item">REST APIs</span><span class="marquee-item ghost">Git &amp; GitHub</span>
+    </div>
+  </div>
+
+  <!-- ================= ABOUT (bento) ================= -->
   <section id="about">
     <div class="container">
-      <div class="section-head reveal">
-        <p class="eyebrow">About</p>
+      <div class="sec-head reveal">
+        <p class="sec-index"><b>01</b> / About</p>
         <h2>Engineering with a name behind it.</h2>
       </div>
-      <div class="founder">
-        <div class="reveal">
-          <p class="founder-quote">
-            “A well-built system goes unnoticed: it simply <em>works</em>, every single day,
-            while the team focuses on growing the business.”
+      <div class="bento">
+        <div class="card quote reveal">
+          <p>“A well-built system goes unnoticed: it simply <em>works</em>, every single day, while the team focuses on growing.”</p>
+        </div>
+        <div class="card span-2 reveal">
+          <h3>Felix Luis Felipe Chávez Ramírez</h3>
+          <p class="role-line">Software Engineer · DevOps Tech Lead</p>
+          <p class="body">
+            Software engineer focused on scalable SaaS platforms, modern web applications and DevOps-driven
+            environments. I combine full-stack development with technical project management: system
+            architecture, database optimization, API integration and stable, secure deployments. I study
+            Software Engineering at Universidad Mesoamericana and trained at Platzi. I speak Spanish (native),
+            English (C1) and German (A1).
           </p>
-          <div class="founder-card" style="margin-top: 40px;">
-            <h3>Felix Luis Felipe Chávez Ramírez</h3>
-            <p class="role">Software Engineer · DevOps Tech Lead</p>
-            <p>
-              Software engineer focused on scalable SaaS platforms, modern web applications and
-              DevOps-driven environments. I combine full-stack development with technical project
-              management: system architecture, database optimization, API integration and stable,
-              secure deployment workflows. I study Software Engineering at Universidad Mesoamericana
-              (Quetzaltenango) and trained as a developer at Platzi.
-            </p>
-            <p>
-              I speak Spanish (native), English (C1) and German (A1). I work from Quetzaltenango,
-              Guatemala, for clients across the United States and Central America.
-            </p>
-            <div class="case-actions">
-              <a class="btn btn-sm" href="https://luisf3lipe.vercel.app/about" target="_blank" rel="noopener">Personal website ↗</a>
-            </div>
+          <a class="link" href="https://luisf3lipe.vercel.app/about" target="_blank" rel="noopener">Personal website →</a>
+        </div>
+        <div class="card reveal" data-delay="1">
+          <div class="stat-num">5+</div>
+          <div class="stat-lbl">Years engineering</div>
+        </div>
+        <div class="card tile-2 reveal" data-delay="2">
+          <div class="stat-num">3</div>
+          <div class="stat-lbl">Countries reached</div>
+        </div>
+        <div class="card reveal" data-delay="3">
+          <div class="stat-num">10+</div>
+          <div class="stat-lbl">Platforms</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CAREER ================= -->
+  <section id="experience">
+    <div class="container">
+      <div class="sec-head reveal">
+        <p class="sec-index"><b>02</b> / Career</p>
+        <h2>Where I've built.</h2>
+      </div>
+      <div class="timeline">
+        <div class="t-row reveal">
+          <div class="t-year">2024 — Now<span>Present</span></div>
+          <div class="t-body">
+            <h3>Software Engineer · DevOps Tech Lead</h3>
+            <p class="where">Fletes USA</p>
+            <p>I lead the development and maintenance of scalable SaaS platforms: full-stack solutions for internal operations, client management and automation. System architecture, database optimization, API integration and stable, secure DevOps deployment workflows.</p>
           </div>
         </div>
-
-        <div class="reveal" data-delay="1" id="experience" style="scroll-margin-top: 90px;">
-          <h4 style="font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 26px;">Career</h4>
-          <div class="timeline">
-            <div class="t-item">
-              <span class="when">2024 — Present</span>
-              <h3>Software Engineer · DevOps Tech Lead</h3>
-              <p class="where">Fletes USA</p>
-              <p>
-                I lead the development and maintenance of scalable SaaS platforms: full-stack solutions
-                for internal operations, client management and process automation. System architecture,
-                database optimization, API integration and stable, secure DevOps deployment workflows.
-              </p>
-            </div>
-            <div class="t-item">
-              <span class="when">2022 — 2024</span>
-              <h3>Project Manager</h3>
-              <p class="where">Cari Latinoamérica</p>
-              <p>
-                Managed technology projects with agile methodologies (Scrum): coordinating
-                cross-functional teams, sprint planning, tracking in Jira and communication between
-                stakeholders, developers and operations.
-              </p>
-            </div>
-            <div class="t-item">
-              <span class="when">2021 — 2022</span>
-              <h3>Software Automation Engineer</h3>
-              <p class="where">ServiTech</p>
-              <p>
-                Designed and maintained automation solutions: testing, deployments, monitoring and
-                system integration to reduce manual work and increase software reliability.
-              </p>
-            </div>
-            <div class="t-item">
-              <span class="when">Education</span>
-              <h3>Software Engineering</h3>
-              <p class="where">Universidad Mesoamericana, Quetzaltenango · Platzi</p>
-              <p>University degree in progress, complemented by continuous specialization in web development.</p>
-            </div>
+        <div class="t-row reveal">
+          <div class="t-year">2022 — 2024<span>2 years</span></div>
+          <div class="t-body">
+            <h3>Project Manager</h3>
+            <p class="where">Cari Latinoamérica</p>
+            <p>Managed technology projects with agile methodologies (Scrum): coordinating teams, sprint planning, tracking in Jira and communication between stakeholders, developers and operations.</p>
+          </div>
+        </div>
+        <div class="t-row reveal">
+          <div class="t-year">2021 — 2022<span>1 year</span></div>
+          <div class="t-body">
+            <h3>Software Automation Engineer</h3>
+            <p class="where">ServiTech</p>
+            <p>Designed and maintained automation solutions: testing, deployments, monitoring and system integration to reduce manual work and increase software reliability.</p>
+          </div>
+        </div>
+        <div class="t-row reveal">
+          <div class="t-year">Education<span>In progress</span></div>
+          <div class="t-body">
+            <h3>Software Engineering</h3>
+            <p class="where">Universidad Mesoamericana, Quetzaltenango · Platzi</p>
+            <p>University degree in progress, complemented by continuous specialization in web development.</p>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ================= SKILLS ================= -->
-  <section id="skills">
+  <!-- ================= WORK ================= -->
+  <section id="work">
     <div class="container">
-      <div class="section-head reveal">
-        <p class="eyebrow">Skills</p>
-        <h2>The tools I build with.</h2>
-      </div>
-      <div class="skill-groups">
-        <div class="skill-group reveal">
-          <h3>Frontend</h3>
-          <div class="chips">
-            <span class="chip">JavaScript</span>
-            <span class="chip">TypeScript</span>
-            <span class="chip">React</span>
-            <span class="chip">Next.js</span>
-          </div>
-        </div>
-        <div class="skill-group reveal" data-delay="1">
-          <h3>Backend</h3>
-          <div class="chips">
-            <span class="chip">Node.js</span>
-            <span class="chip">NestJS</span>
-            <span class="chip">Prisma ORM</span>
-            <span class="chip">SQL</span>
-            <span class="chip">REST APIs</span>
-          </div>
-        </div>
-        <div class="skill-group reveal" data-delay="2">
-          <h3>DevOps</h3>
-          <div class="chips">
-            <span class="chip">Docker</span>
-            <span class="chip">Linux</span>
-            <span class="chip">CI/CD</span>
-            <span class="chip">Git &amp; GitHub</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= PROJECTS ================= -->
-  <section id="projects">
-    <div class="container">
-      <div class="section-head reveal">
-        <p class="eyebrow">Projects</p>
+      <div class="sec-head reveal">
+        <p class="sec-index"><b>03</b> / Work</p>
         <h2>Software in production.</h2>
         <p>Systems and platforms supporting the daily operation of real companies.</p>
       </div>
-      <div class="projects">
-        <a class="project reveal" href="https://freightmanagementsystem.us.com" target="_blank" rel="noopener">
+      <div class="proj-grid">
+        <a class="proj reveal" href="https://freightmanagementsystem.us.com" target="_blank" rel="noopener">
+          <span class="n">01</span>
           <span class="tag">SaaS · Logistics</span>
-          <span>
-            <h3>Fletes USA — Freight Manager System</h3>
-            <p>End-to-end freight management platform: operations, clients, real-time tracking and process automation.</p>
-          </span>
-          <span class="arrow" aria-hidden="true">↗</span>
+          <h3>Fletes USA — Freight Manager System</h3>
+          <p>End-to-end freight management platform: operations, clients, real-time tracking and process automation.</p>
+          <span class="go">View live ↗</span>
         </a>
-        <a class="project reveal" data-delay="1" href="#contact">
+        <a class="proj reveal" data-delay="1" href="#contact">
+          <span class="n">02</span>
           <span class="tag">System · Real estate</span>
-          <span>
-            <h3>Golden Homes System</h3>
-            <p>Real-estate sales management: lot inventory, reservations, site plans, commissions and user roles.</p>
-          </span>
-          <span class="arrow" aria-hidden="true">→</span>
+          <h3>Golden Homes System</h3>
+          <p>Real-estate sales management: lot inventory, reservations, site plans, commissions and user roles.</p>
+          <span class="go">More info →</span>
         </a>
-        <a class="project reveal" data-delay="2" href="https://www.felplex.com" target="_blank" rel="noopener">
+        <a class="proj reveal" data-delay="1" href="https://www.felplex.com" target="_blank" rel="noopener">
+          <span class="n">03</span>
           <span class="tag">Web · Commerce</span>
-          <span>
-            <h3>Felplex GT &amp; SV</h3>
-            <p>Multi-country digital presence with a catalog and consistent brand experience in Guatemala and El Salvador.</p>
-          </span>
-          <span class="arrow" aria-hidden="true">↗</span>
+          <h3>Felplex GT &amp; SV</h3>
+          <p>Multi-country digital presence with a catalog and consistent brand experience in Guatemala and El Salvador.</p>
+          <span class="go">View live ↗</span>
         </a>
-        <a class="project reveal" data-delay="3" href="https://carifree.com/" target="_blank" rel="noopener">
+        <a class="proj reveal" data-delay="2" href="https://carifree.com/" target="_blank" rel="noopener">
+          <span class="n">04</span>
           <span class="tag">Web · Health</span>
-          <span>
-            <h3>Carifree</h3>
-            <p>Dental clinic website focused on patient conversion: clear, fast and easy to manage.</p>
-          </span>
-          <span class="arrow" aria-hidden="true">↗</span>
+          <h3>Carifree</h3>
+          <p>Dental clinic website focused on patient conversion: clear, fast and easy to manage.</p>
+          <span class="go">View live ↗</span>
         </a>
       </div>
     </div>
@@ -246,11 +219,11 @@
   <section id="contact">
     <div class="container">
       <div class="contact-panel reveal">
-        <p class="eyebrow centered">Contact</p>
+        <p class="eyebrow">Contact</p>
         <h2>Shall we work together?</h2>
         <p>Tell me what you need to build. I reply within 24 hours.</p>
-        <div class="hero-ctas centered">
-          <a class="btn btn-primary" href="mailto:cptain3m0@proton.me?subject=Contact%20from%20portfolio">Write to me</a>
+        <div class="hero-ctas">
+          <a class="btn btn-dark" href="mailto:cptain3m0@proton.me?subject=Contact%20from%20portfolio">Write to me</a>
           <a class="btn" href="https://wa.me/00000000000" target="_blank" rel="noopener">WhatsApp</a>
         </div>
         <div class="contact-lines">
@@ -264,15 +237,7 @@
 
   <footer class="footer-portfolio">
     <div class="container">
-      <span class="sig">
-        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
-          <circle cx="16" cy="18" r="7" fill="var(--accent)"/>
-          <circle cx="26" cy="7" r="2.2" fill="var(--text)"/>
-          <circle cx="6" cy="10" r="1.6" fill="var(--text)"/>
-          <circle cx="27" cy="26" r="1.4" fill="var(--text)"/>
-        </svg>
-        LUIS FELIPE
-      </span>
+      <span class="sig"><span class="brand-badge">LF</span> <b>Luis Felipe</b></span>
       <p class="from">© 2026 Luis Felipe · A project by <a href="https://freightmanagementsystem.us.com" target="_blank" rel="noopener">Tikal Solutions</a>. All rights reserved.</p>
     </div>
   </footer>
