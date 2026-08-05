@@ -1,8 +1,9 @@
 # Luis Felipe — Portafolio
 
 Portafolio personal de Felix Luis Felipe Chávez Ramírez. Sitio estático bilingüe
-(ES/EN), sin dependencias ni build: HTML + CSS + JS puros. El fondo de estrellas
-y el planeta de puntos son un motor de proyección 3D propio sobre `<canvas>`.
+(ES/EN), sin dependencias ni build: HTML + CSS + JS puros. El fondo es un relieve
+topográfico animado (isolíneas por *marching squares* sobre un campo escalar en
+movimiento) dibujado en `<canvas>`; se detiene con `prefers-reduced-motion`.
 
 Nace del ecosistema de **Tikal Solutions** y comparte su lenguaje visual.
 
@@ -13,8 +14,8 @@ luis-felipe/
 ├── index.html         # Portafolio (español)
 ├── en/index.html      # Portafolio (inglés)
 ├── assets/
-│   ├── styles.css     # Estilos (tema claro/oscuro, Space Mono)
-│   ├── app.js         # Motor 3D + tema + idioma ESP/ENG + cambio de foto
+│   ├── styles.css     # Estilos (tema claro/oscuro; Sora · Inter · JetBrains Mono)
+│   ├── app.js         # Fondo topográfico + tema + idioma ESP/ENG + cambio de foto
 │   └── img/
 │       └── luis.jpg   # Foto de perfil (placeholder — reemplázala por la tuya)
 └── README.md

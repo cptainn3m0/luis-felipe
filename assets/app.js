@@ -1,190 +1,135 @@
 /* =====================================================================
    LUIS FELIPE — Portafolio · app.js
-   Fondo 3D propio sobre canvas 2D (cero dependencias): un NUDO TOROIDAL
-   giratorio dibujado como línea con brillo, más un campo de polvo con
-   paralaje. Paleta naranja + celeste. Identidad propia, distinta a Tikal.
-   Extra: tema, idioma ES/EN, menú móvil y cambio de foto de perfil.
+   Tema claro/oscuro, idioma ES/EN, menú móvil, revelado al hacer scroll
+   y cambio de foto de perfil. (Fondo animado retirado — pendiente rediseño.)
    ===================================================================== */
 (() => {
   "use strict";
 
-  const canvas = document.getElementById("cosmos");
-  const ctx = canvas.getContext("2d");
-  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const root = document.documentElement;
   const nav = document.getElementById("nav");
 
-  let W = 0, H = 0, DPR = 1;
-  let scrollFade = 1;
-  const mouse = { x: 0, y: 0 };
+  /* ---------- Fondo: relieve topográfico (marching squares) ----------
+     Isolíneas de un campo escalar en movimiento lento. Dos curvas de
+     acento en naranja/celeste; el resto en el color de trazo del tema.
+     Muy tenue y quieto detrás del contenido; estático si reduce-motion. */
+  (() => {
+    const bg = document.getElementById("bg");
+    if (!bg) return;
+    const ctx = bg.getContext("2d");
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* ---------- Colores desde las CSS variables ---------- */
-  const ALPHA = 16;
-  let sOrange = [], sCeleste = [], sText = [], sDust = [];
-  let orangeRGB = "255,106,43", celesteRGB = "53,198,255";
+    const hexToRGB = hex => {
+      hex = (hex || "").trim().replace("#", "");
+      if (hex.length === 3) hex = hex.split("").map(c => c + c).join("");
+      const n = parseInt(hex, 16);
+      return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+    };
+    let line = [210, 215, 228], orange = [255, 106, 43], celeste = [55, 198, 255];
+    const readColors = () => {
+      const cs = getComputedStyle(root);
+      const d = (cs.getPropertyValue("--dust") || "").trim();
+      if (d) line = d.split(",").map(Number);
+      orange = hexToRGB(cs.getPropertyValue("--accent") || "#ff6a2b");
+      celeste = hexToRGB(cs.getPropertyValue("--accent-2") || "#37c4ff");
+    };
 
-  function hexToRGB(hex) {
-    hex = hex.trim().replace("#", "");
-    if (hex.length === 3) hex = hex.split("").map(c => c + c).join("");
-    const n = parseInt(hex, 16);
-    return `${(n >> 16) & 255},${(n >> 8) & 255},${n & 255}`;
-  }
-  function ramp(rgb) {
-    const out = [];
-    for (let i = 0; i <= ALPHA; i++) out.push(`rgba(${rgb},${(i / ALPHA).toFixed(3)})`);
-    return out;
-  }
-  function readTheme() {
-    const cs = getComputedStyle(root);
-    orangeRGB = hexToRGB(cs.getPropertyValue("--accent") || "#ff6a2b");
-    celesteRGB = hexToRGB(cs.getPropertyValue("--accent-2") || "#35c6ff");
-    const textRGB = hexToRGB(cs.getPropertyValue("--text") || "#f4f5f7");
-    const dust = cs.getPropertyValue("--dust").trim() || "200,205,220";
-    sOrange = ramp(orangeRGB);
-    sCeleste = ramp(celesteRGB);
-    sText = ramp(textRGB);
-    sDust = ramp(dust);
-  }
-  const aIdx = a => Math.max(0, Math.min(ALPHA, Math.round(a * ALPHA)));
+    const CELL = 40;                 // resolución del campo (px)
+    let W = 0, H = 0, DPR = 1, cols = 0, rows = 0, gx = 0;
+    let vals = new Float32Array(0);
 
-  /* ---------- Geometría: nudo toroidal (p,q) = (2,3) ---------- */
-  const KN = 560;
-  const knot = [];
-  for (let i = 0; i < KN; i++) {
-    const t = (i / KN) * Math.PI * 2;
-    const p = 2, q = 3;
-    const r = Math.cos(q * t) + 2.3;
-    knot.push({
-      x: r * Math.cos(p * t),
-      y: r * Math.sin(p * t),
-      z: -Math.sin(q * t) * 1.15,
-      mix: 0.5 + 0.5 * Math.sin(q * t + 1.2)   // 0 celeste → 1 naranja
-    });
-  }
+    const resize = () => {
+      DPR = Math.min(devicePixelRatio || 1, 2);
+      W = innerWidth; H = innerHeight;
+      bg.width = Math.floor(W * DPR);
+      bg.height = Math.floor(H * DPR);
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      cols = Math.ceil(W / CELL) + 1;
+      rows = Math.ceil(H / CELL) + 1;
+      gx = cols + 1;
+      vals = new Float32Array(gx * (rows + 1));
+    };
 
-  /* ---------- Polvo con paralaje ---------- */
-  const DUST = 150;
-  const dust = [];
-  for (let i = 0; i < DUST; i++) {
-    dust.push({
-      x: Math.random(), y: Math.random(),
-      d: 0.25 + Math.random() * 0.75,
-      warm: Math.random() < 0.35,             // algunos con tinte naranja
-      ph: Math.random() * Math.PI * 2,
-      sp: 0.4 + Math.random() * 1.1
-    });
-  }
+    const NORM = 1 / 3.2;            // normaliza la suma de ondas a ~[-1,1]
+    const computeField = t => {
+      for (let j = 0; j <= rows; j++) {
+        const y = j * CELL;
+        for (let i = 0; i <= cols; i++) {
+          const x = i * CELL;
+          const v =
+            Math.sin(x * 0.0060 + t * 0.16) +
+            Math.sin(y * 0.0075 - t * 0.13) +
+            Math.sin((x + y) * 0.0042 + t * 0.10) +
+            0.8 * Math.sin(Math.hypot(x - W * 0.72, y - H * 0.30) * 0.0075 - t * 0.22);
+          vals[i + j * gx] = v * NORM;
+        }
+      }
+    };
 
-  const PERSPECTIVE = 3.4;
+    // marching squares: aristas a conectar por caso (T=0,R=1,B=2,L=3)
+    const SEG = [
+      [], [[0, 3]], [[0, 1]], [[3, 1]], [[1, 2]], [[0, 3], [1, 2]], [[0, 2]], [[3, 2]],
+      [[2, 3]], [[0, 2]], [[0, 1], [2, 3]], [[1, 2]], [[3, 1]], [[0, 1]], [[0, 3]], []
+    ];
+    const edge = (e, x, y, a, b, c, d, L) => {
+      switch (e) {
+        case 0: return [x + CELL * ((L - a) / (b - a || 1e-6)), y];
+        case 1: return [x + CELL, y + CELL * ((L - b) / (c - b || 1e-6))];
+        case 2: return [x + CELL * ((L - d) / (c - d || 1e-6)), y + CELL];
+        default: return [x, y + CELL * ((L - a) / (d - a || 1e-6))];
+      }
+    };
 
-  function resize() {
-    DPR = Math.min(devicePixelRatio || 1, 2);
-    W = innerWidth; H = innerHeight;
-    canvas.width = W * DPR;
-    canvas.height = H * DPR;
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-  }
-
-  function mixStyle(mix, a) {
-    // interpola naranja↔celeste con transparencia usando color explícito
-    const o = orangeRGB.split(",").map(Number);
-    const c = celesteRGB.split(",").map(Number);
-    const r = Math.round(c[0] + (o[0] - c[0]) * mix);
-    const g = Math.round(c[1] + (o[1] - c[1]) * mix);
-    const b = Math.round(c[2] + (o[2] - c[2]) * mix);
-    return `rgba(${r},${g},${b},${a.toFixed(3)})`;
-  }
-
-  let ax = 0.4, ay = 0.2, lastT = 0;
-
-  function frame(now) {
-    const dt = lastT ? Math.min((now - lastT) / 1000, 0.05) : 0.016;
-    lastT = now;
-    const t = now / 1000;
-    ctx.clearRect(0, 0, W, H);
-
-    /* ----- polvo ----- */
-    const drift = reduceMotion ? 0 : t * 5;
-    for (const s of dust) {
-      const px = ((s.x * W + drift * s.d + mouse.x * 26 * s.d) % (W + 40) + (W + 40)) % (W + 40) - 20;
-      const py = s.y * H + mouse.y * 16 * s.d;
-      const tw = reduceMotion ? 0.7 : 0.55 + 0.45 * Math.sin(t * s.sp + s.ph);
-      const a = Math.min(1, s.d * tw * 0.9);
-      const size = s.d * 2 + 0.5;
-      ctx.fillStyle = (s.warm ? sOrange : sDust)[aIdx(a)];
-      ctx.fillRect(px, py, size, size);
-    }
-
-    /* ----- nudo toroidal ----- */
-    if (!reduceMotion) { ax += dt * 0.12; ay += dt * 0.19; }
-    else { ax += dt * 0.03; ay += dt * 0.05; }
-    const cA = Math.cos(ax), sA = Math.sin(ax);
-    const cB = Math.cos(ay), sB = Math.sin(ay);
-
-    const raw = 1 - scrollFade;                 // 0 hero → 1 con scroll
-    const pp = raw * raw * (3 - 2 * raw);
-    const wide = W > 900;
-    const R = Math.min(W, H) * (wide ? 0.165 : 0.15);
-    const cx = wide ? W * (0.70 - 0.20 * pp) : W * 0.5;
-    const cy = wide ? H * (0.52 + 0.02 * pp) : H * (0.40 + 0.05 * pp);
-    const baseA = (wide ? 0.85 : 0.5) * (0.35 + 0.65 * scrollFade);
-
-    const pts = new Array(KN);
-    for (let i = 0; i < KN; i++) {
-      const k = knot[i];
-      // rotar en Y luego X
-      let x = k.x * cB + k.z * sB;
-      let z = -k.x * sB + k.z * cB;
-      let y = k.y * cA - z * sA;
-      z = k.y * sA + z * cA;
-      const pers = PERSPECTIVE / (PERSPECTIVE - z);
-      pts[i] = {
-        sx: cx + x * R * pers,
-        sy: cy + y * R * pers,
-        depth: (z + 2) / 4,                     // ~0 atrás → ~1 frente
-        w: pers,
-        mix: k.mix
-      };
-    }
-
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    // pasada suave (glow) + núcleo
-    for (let pass = 0; pass < 2; pass++) {
-      for (let i = 0; i < KN; i++) {
-        const a = pts[i], b = pts[(i + 1) % KN];
-        const depth = (a.depth + b.depth) / 2;
-        const alpha = baseA * (0.06 + 0.94 * depth * depth) * (pass === 0 ? 0.35 : 1);
-        if (alpha < 0.015) continue;
-        ctx.strokeStyle = mixStyle(a.mix, alpha);
-        ctx.lineWidth = (pass === 0 ? 5 : 1.6) * a.w * (0.5 + depth);
+    const LEVELS = 15;
+    const draw = () => {
+      ctx.clearRect(0, 0, W, H);
+      ctx.lineWidth = 1;
+      ctx.lineJoin = "round";
+      ctx.lineCap = "round";
+      for (let l = 0; l < LEVELS; l++) {
+        const L = -0.95 + (1.9 * l) / (LEVELS - 1);
+        const isO = l === 4, isC = l === 10;
+        const col = isO ? orange : isC ? celeste : line;
+        ctx.strokeStyle = `rgba(${col[0]},${col[1]},${col[2]},${isO || isC ? 0.17 : 0.09})`;
         ctx.beginPath();
-        ctx.moveTo(a.sx, a.sy);
-        ctx.lineTo(b.sx, b.sy);
+        for (let j = 0; j < rows; j++) {
+          for (let i = 0; i < cols; i++) {
+            const a = vals[i + j * gx], b = vals[(i + 1) + j * gx];
+            const c = vals[(i + 1) + (j + 1) * gx], d = vals[i + (j + 1) * gx];
+            let cse = 0;
+            if (a > L) cse |= 1; if (b > L) cse |= 2;
+            if (c > L) cse |= 4; if (d > L) cse |= 8;
+            const segs = SEG[cse];
+            if (!segs.length) continue;
+            const x = i * CELL, y = j * CELL;
+            for (let s = 0; s < segs.length; s++) {
+              const p0 = edge(segs[s][0], x, y, a, b, c, d, L);
+              const p1 = edge(segs[s][1], x, y, a, b, c, d, L);
+              ctx.moveTo(p0[0], p0[1]); ctx.lineTo(p1[0], p1[1]);
+            }
+          }
+        }
         ctx.stroke();
       }
-    }
-    // nodos de acento celeste
-    for (let i = 0; i < KN; i += 28) {
-      const a = pts[i];
-      const alpha = baseA * (0.2 + 0.8 * a.depth);
-      const size = (1.6 + 2.2 * a.depth) * a.w;
-      ctx.fillStyle = sCeleste[aIdx(Math.min(1, alpha))];
-      ctx.fillRect(a.sx - size / 2, a.sy - size / 2, size, size);
-    }
+    };
 
-    requestAnimationFrame(frame);
-  }
+    let raf = 0;
+    const frame = now => { computeField(now / 1000); draw(); raf = requestAnimationFrame(frame); };
+    const start = () => { if (!raf) raf = requestAnimationFrame(frame); };
+    const stop = () => { cancelAnimationFrame(raf); raf = 0; };
 
-  /* ---------- Eventos ---------- */
-  addEventListener("resize", resize, { passive: true });
+    addEventListener("resize", () => { resize(); if (reduce) { computeField(8); draw(); } }, { passive: true });
+    document.addEventListener("visibilitychange", () => { if (document.hidden) stop(); else if (!reduce) start(); });
+    addEventListener("lf-theme", readColors);
+
+    readColors();
+    resize();
+    if (reduce) { computeField(8); draw(); } else start();
+  })();
+
+  /* ---------- Barra: estado al hacer scroll ---------- */
   addEventListener("scroll", () => {
-    scrollFade = Math.max(0, 1 - scrollY / (innerHeight * 0.85));
     nav.classList.toggle("scrolled", scrollY > 20);
-  }, { passive: true });
-  addEventListener("pointermove", e => {
-    mouse.x = (e.clientX / W - 0.5) * 2;
-    mouse.y = (e.clientY / H - 0.5) * 2;
   }, { passive: true });
 
   /* ---------- Tema claro/oscuro ---------- */
@@ -193,7 +138,7 @@
   document.getElementById("themeToggle").addEventListener("click", () => {
     root.dataset.theme = root.dataset.theme === "dark" ? "light" : "dark";
     localStorage.setItem("lf-theme", root.dataset.theme);
-    readTheme();
+    dispatchEvent(new Event("lf-theme"));
   });
 
   /* ---------- Banderas + idioma ---------- */
@@ -324,9 +269,5 @@
   }
 
   /* ---------- Arranque ---------- */
-  readTheme();
-  resize();
-  scrollFade = Math.max(0, 1 - scrollY / (innerHeight * 0.85));
   nav.classList.toggle("scrolled", scrollY > 20);
-  requestAnimationFrame(frame);
 })();
