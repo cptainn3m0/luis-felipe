@@ -216,30 +216,11 @@
     langToggle.addEventListener("click", () => localStorage.setItem("lf-lang", LANG === "es" ? "en" : "es"));
   }
 
+  // Si hay una preferencia guardada de otro idioma, redirige a su equivalente.
+  // Sin preferencia, se muestra el idioma de la página (español en la raíz);
+  // el visitante cambia con el botón ES/EN. Sin overlay bloqueante.
   if (langPref && langPref !== LANG && ALT_HREF) {
     location.replace(ALT_HREF);
-  } else if (!langPref) {
-    const ov = document.createElement("div");
-    ov.className = "lang-overlay";
-    ov.setAttribute("role", "dialog");
-    ov.setAttribute("aria-label", "Selección de idioma / Language selection");
-    ov.innerHTML =
-      '<div>' +
-      '<span class="brand-badge lg">LF</span>' +
-      '<h2>LUIS FELIPE</h2>' +
-      '<p>Elige tu idioma · Choose your language</p>' +
-      '<div class="lang-actions">' +
-      '<button class="btn btn-primary" id="pickEs" type="button">' + FLAG_GT + '<span>Español</span></button>' +
-      '<button class="btn" id="pickEn" type="button">' + FLAG_US + '<span>English</span></button>' +
-      '</div></div>';
-    document.body.appendChild(ov);
-    const pick = lang => {
-      localStorage.setItem("lf-lang", lang);
-      if (lang === LANG || !ALT_HREF) { ov.classList.add("hide"); setTimeout(() => ov.remove(), 500); }
-      else location.replace(ALT_HREF);
-    };
-    ov.querySelector("#pickEs").addEventListener("click", () => pick("es"));
-    ov.querySelector("#pickEn").addEventListener("click", () => pick("en"));
   }
 
   /* ---------- Revelado al hacer scroll ---------- */
@@ -247,26 +228,6 @@
     for (const e of entries) if (e.isIntersecting) { e.target.classList.add("visible"); io.unobserve(e.target); }
   }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
   document.querySelectorAll(".reveal").forEach(el => io.observe(el));
-
-  /* ---------- Foto de perfil ---------- */
-  const portrait = document.getElementById("portrait");
-  const photoInput = document.getElementById("photoInput");
-  if (portrait) {
-    const savedPhoto = localStorage.getItem("lf-photo");
-    if (savedPhoto) portrait.src = savedPhoto;
-    if (photoInput) {
-      photoInput.addEventListener("change", () => {
-        const file = photoInput.files && photoInput.files[0];
-        if (!file || !file.type.startsWith("image/")) return;
-        const reader = new FileReader();
-        reader.onload = () => {
-          portrait.src = String(reader.result);
-          try { localStorage.setItem("lf-photo", String(reader.result)); } catch (_) {}
-        };
-        reader.readAsDataURL(file);
-      });
-    }
-  }
 
   /* ---------- Arranque ---------- */
   nav.classList.toggle("scrolled", scrollY > 20);
