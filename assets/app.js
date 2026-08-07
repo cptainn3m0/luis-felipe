@@ -177,10 +177,15 @@
     navAnchors.forEach(a => panel.appendChild(a.cloneNode(true)));
     const contactLink = actions.querySelector("a.btn");
     if (contactLink) {
-      const c = document.createElement("a");
-      c.href = contactLink.getAttribute("href");
-      c.textContent = contactLink.textContent.trim();
-      panel.appendChild(c);
+      const href = contactLink.getAttribute("href");
+      // evita duplicar si ese destino ya es un enlace del nav (p. ej. "Contacto")
+      const dup = [...navAnchors].some(a => a.getAttribute("href") === href);
+      if (!dup) {
+        const c = document.createElement("a");
+        c.href = href;
+        c.textContent = contactLink.textContent.trim();
+        panel.appendChild(c);
+      }
     }
     const langNav = actions.querySelector(".lang-toggle");
     if (langNav) {

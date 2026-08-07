@@ -203,6 +203,7 @@ html[data-theme="light"] .icon-sun { display: none; } html[data-theme="light"] .
 .mobile-menu a:last-child { border-bottom: none; }
 .mobile-menu a:hover { color: var(--accent); }
 @media (max-width: 940px) {
+  .nav-links { display: none; }          /* enlaces van al menú desplegable (☰) */
   .menu-toggle { display: grid; }
   .nav-actions .lang-toggle { display: none; }
   .theme-toggle {
